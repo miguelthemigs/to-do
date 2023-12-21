@@ -9,12 +9,35 @@ const client = new Client({
   database: "To-Do-Database"
 })
 
-client.connect();
-client.query(`SELECT * FROM notes`, (err, res)=> {
-  if(!err){
-    console.log(res.rows);
-  } else{
-    console.log(err.message);
+let notes = [];
+// Connect to the PostgreSQL database
+async function connectToDB() {
+  try {
+    await client.connect(); // Connect to the database
+
+    // Query the database using 'async/await'
+    const result = await client.query('SELECT * FROM notes');
+
+    // Extract 'text' values from the result
+    notes.push(...result.rows.map(row => row.text)); // Using 'push' to add elements to 'notes'
+    console.log('Notes retrieved:', notes);
+  } catch (error) {
+    console.error(`Error connecting to the database: ${error.message}`);
+  } finally {
+    await client.end(); // Close the database connection
   }
-  client.end;
-})
+}
+
+async function handleDatabase() {
+  try {
+    await connectToDB(); // Wait for connectToDB() to finish retrieving notes
+    // Log 'notes' after 'connectToDB()' completes
+    console.log('Notes in list:', notes);
+  } catch (error) {
+    console.error('Error handling database:', error.message);
+  }
+}
+
+// Call the function to handle the database connection and logging of notes
+handleDatabase();
+

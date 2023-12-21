@@ -62,3 +62,18 @@ function showTask() { // it gets all tasks from localstorage
 }
 
 showTask();
+
+const { connectToDB } = require('./dbFunctions'); // Import the function
+
+// Usage of the 'connectToDB' function in another file
+async function retrieveNotesFromOtherFile() {
+  try {
+    const notes = await connectToDB(); // Get 'text' values using 'async/await'
+    console.log('Notes retrieved in another file:', notes);
+    // Further logic with 'notes'
+  } catch (error) {
+    console.error(error.message);
+  }
+}
+
+retrieveNotesFromOtherFile(); // Call the function from another file
