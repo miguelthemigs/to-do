@@ -10,9 +10,27 @@ function addTask(){
     let li = document.createElement('li'); // create a HTML element with the tag name li
     li.innerHTML = inputBox.value; // add the text (inner HTML == text), that will be what was written
     listContainer.appendChild(li); // append the li in the list container
-   let span = document.createElement("span");
-   span.innerHTML = "\u00d7"; // cross icon, the icon for deletion
-   li.appendChild(span); // we append span on the task, that is li
+
+    let span = document.createElement("span");
+    span.innerHTML = "\u00d7"; // cross icon, the icon for deletion
+    li.appendChild(span); // we append span on the task, that is li
+
+    let edit = document.createElement("edit"); // creating the edit button
+    edit.innerHTML = "\u270e";
+    li.appendChild(edit);
+    
+    edit.addEventListener("click", function() {
+      const newText = prompt("Edit your task", li.firstChild.textContent);
+      if (newText !== null && newText !== '') {
+        li.firstChild.textContent = newText; // Update only the text content
+        saveData();
+      }
+    });
+
+    span.addEventListener("click", function() {
+      li.remove(); // Allow deletion by clicking the "delete" icon
+      saveData();
+    });
   }
   inputBox.value = ''; // clear the content of the inputbox
   saveData();
