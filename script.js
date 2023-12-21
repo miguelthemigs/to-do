@@ -1,58 +1,64 @@
 const inputBox = document.getElementById("input-box");
 const listContainer = document.getElementById("list-container");
 
-
-function addTask(){
-  if(inputBox.value === ''){ // if nothing was written
-    alert("You must write a task");
-  }
-  else{
-    let li = document.createElement('li'); // create a HTML element with the tag name li
-    li.innerHTML = inputBox.value; // add the text (inner HTML == text), that will be what was written
-    listContainer.appendChild(li); // append the li in the list container
-
-    let span = document.createElement("span");
-    span.innerHTML = "\u00d7"; // cross icon, the icon for deletion
-    li.appendChild(span); // we append span on the task, that is li
-
-    let edit = document.createElement("edit"); // creating the edit button
-    edit.innerHTML = "\u270e";
-    li.appendChild(edit);
-    
-    edit.addEventListener("click", function() {
-      const newText = prompt("Edit your task", li.firstChild.textContent);
-      if (newText !== null && newText !== '') {
-        li.firstChild.textContent = newText; // Update only the text content
-        saveData();
-      }
-    });
-
-    span.addEventListener("click", function() {
-      li.remove(); // Allow deletion by clicking the "delete" icon
-      saveData();
-    });
-  }
-  inputBox.value = ''; // clear the content of the inputbox
-  saveData();
+function createDeleteButton(parentElement) {
+  let span = document.createElement("span");
+  span.innerHTML = "\u00d7";
+  parentElement.appendChild(span);
+  span.addEventListener("click", function () {
+    parentElement.remove();
+    saveData();
+  });
 }
 
-listContainer.addEventListener("click", function(e){ // e is an event object
-  if(e.target.tagName === 'LI'){ // if we have clicked on LI (on the task)
-    e.target.classList.toggle("checked"); // toggle to the checked class name in CSS
+function createEditButton(parentElement) {
+  let edit = document.createElement("edit");
+  edit.innerHTML = "\u270e";
+  parentElement.appendChild(edit);
+  edit.addEventListener("click", function () {
+    const newText = prompt("Edit your task", parentElement.firstChild.textContent);
+    if (newText !== null && newText !== '') {
+      parentElement.firstChild.textContent = newText;
+      saveData();
+    }
+  });
+}
+
+function addTask() {
+  if (inputBox.value === '') {
+    alert("You must write a task");
+  } else {
+    let li = document.createElement('li');
+    li.innerHTML = inputBox.value;
+    listContainer.appendChild(li);
+    createDeleteButton(li);
+    createEditButton(li);
+    inputBox.value = '';
     saveData();
   }
-  else if (e.target.tagName === 'SPAN'){ // if we have clicked on a SPAN (the cross to delete)
-    e.target.parentElement.remove(); // we remove the parent element, wich is the LI
+}
+
+listContainer.addEventListener("click", function (e) {
+  if (e.target.tagName === 'LI') {
+    e.target.classList.toggle("checked");
+    saveData();
+  } else if (e.target.tagName === 'SPAN') {
+    e.target.parentElement.remove();
     saveData();
   }
 });
 
-function saveData(){
-  localStorage.setItem("data", listContainer.innerHTML); // responsible for storing the content into the browser's localStorage
-} // setItem() method allows you to set a key-value pair in the local storage.
+function saveData() {
+  localStorage.setItem("data", listContainer.innerHTML);
+}
 
-function showTask(){
-  listContainer.innerHTML = localStorage.getItem("data"); // retrieves the data from the browser
+function showTask() { // it gets all tasks from localstorage
+  listContainer.innerHTML = localStorage.getItem("data");
+  const tasks = listContainer.querySelectorAll('li');
+  tasks.forEach(task => {
+    createDeleteButton(task);
+    createEditButton(task);
+  });
 }
 
 showTask();
