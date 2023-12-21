@@ -63,9 +63,8 @@ function showTask() { // it gets all tasks from localstorage
 }
 
 showTask();
-
+/*
 let notes = [];
-const { connectToDB, handleDatabase } = require('./databasepg');
 
 handleDatabase(notes);
 // Function to create LI elements from notes and add them to the list
@@ -93,3 +92,4 @@ async function retrieveAndDisplayNotes() {
 
 retrieveAndDisplayNotes(); // Call the function to retrieve and display notes
 
+*/

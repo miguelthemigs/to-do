@@ -38,5 +38,5 @@ async function handleDatabase(notes) {
   }
 }
 
-module.exports = { connectToDB, handleDatabase }; // Export the function
+handleDatabase(notes);
 
