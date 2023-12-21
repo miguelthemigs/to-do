@@ -24,7 +24,7 @@ function createEditButton(parentElement) {
   });
 }
 
-function addTask() {
+function addTask() { // is used in the HTML
   if (inputBox.value === '') {
     alert("You must write a task");
   } else {
@@ -41,6 +41,7 @@ function addTask() {
 listContainer.addEventListener("click", function (e) {
   if (e.target.tagName === 'LI') {
     e.target.classList.toggle("checked");
+    console.log("foi");
     saveData();
   } else if (e.target.tagName === 'SPAN') {
     e.target.parentElement.remove();
@@ -63,17 +64,32 @@ function showTask() { // it gets all tasks from localstorage
 
 showTask();
 
-const { connectToDB } = require('./dbFunctions'); // Import the function
+let notes = [];
+const { connectToDB, handleDatabase } = require('./databasepg');
 
-// Usage of the 'connectToDB' function in another file
-async function retrieveNotesFromOtherFile() {
+handleDatabase(notes);
+// Function to create LI elements from notes and add them to the list
+function addNotesToUI(notes) {
+  const listContainer = document.getElementById('list-container');
+
+  notes.forEach(note => {
+    const li = document.createElement('li');
+    li.textContent = note;
+    listContainer.appendChild(li);
+  });
+}
+
+// Handle the database to retrieve notes and render them to the UI
+async function retrieveAndDisplayNotes() {
   try {
-    const notes = await connectToDB(); // Get 'text' values using 'async/await'
-    console.log('Notes retrieved in another file:', notes);
-    // Further logic with 'notes'
+    let notes = [];
+    await handleDatabase(notes); // Retrieve notes from the database
+    console.log('Retrieved notes:', notes);
+    await addNotesToUI(notes); // Add notes to the UI
   } catch (error) {
-    console.error(error.message);
+    console.error('Error:', error.message);
   }
 }
 
-retrieveNotesFromOtherFile(); // Call the function from another file
+retrieveAndDisplayNotes(); // Call the function to retrieve and display notes
+

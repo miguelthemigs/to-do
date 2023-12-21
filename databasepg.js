@@ -11,7 +11,7 @@ const client = new Client({
 
 let notes = [];
 // Connect to the PostgreSQL database
-async function connectToDB() {
+async function connectToDB(notes) {
   try {
     await client.connect(); // Connect to the database
 
@@ -28,9 +28,9 @@ async function connectToDB() {
   }
 }
 
-async function handleDatabase() {
+async function handleDatabase(notes) {
   try {
-    await connectToDB(); // Wait for connectToDB() to finish retrieving notes
+    await connectToDB(notes); // Wait for connectToDB() to finish retrieving notes
     // Log 'notes' after 'connectToDB()' completes
     console.log('Notes in list:', notes);
   } catch (error) {
@@ -38,6 +38,5 @@ async function handleDatabase() {
   }
 }
 
-// Call the function to handle the database connection and logging of notes
-handleDatabase();
+module.exports = { connectToDB, handleDatabase }; // Export the function
 
