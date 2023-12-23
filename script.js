@@ -53,16 +53,40 @@ function saveData() {
   localStorage.setItem("data", listContainer.innerHTML);
 }
 
-function showTask() { // it gets all tasks from localstorage
-  listContainer.innerHTML = localStorage.getItem("data");
-  const tasks = listContainer.querySelectorAll('li');
-  tasks.forEach(task => {
-    createDeleteButton(task);
-    createEditButton(task);
-  });
+// retrieves data from the database
+async function showTasksFromServer() {
+  try {
+    const response = await fetch('http://localhost:3300/notes');
+    if (response.ok) {
+      const tasks = await response.json();
+      console.log('Tasks retrieved:', tasks);
+
+      const taskList = document.getElementById('list-container'); // Get the task list container element
+      taskList.innerHTML = ''; // Clear the list before adding new tasks
+
+      tasks.forEach(task => {
+        const listItem = document.createElement('li');
+        listItem.textContent = task.text;
+        createDeleteButton(listItem); // Create delete button for each task
+        createEditButton(listItem); // Create edit button for each task
+        taskList.appendChild(listItem); // Append the task to the task list
+      });
+    } else {
+      console.error('Failed to retrieve tasks:', response.statusText);
+    }
+  } catch (error) {
+    console.error('Error retrieving tasks:', error.message);
+  }
 }
 
-showTask();
+
+// Example usage of showTasksFromServer function
+async function performTaskRetrieval() {
+  await showTasksFromServer(); // Call the showTasksFromServer function from api.js
+  console.log('Tasks retrieved!');
+}
+
+performTaskRetrieval();
 /*
 let notes = [];
 

@@ -1,6 +1,10 @@
 const client = require("./databasepg.js");
 const express = require("express");
 const app = express();
+const cors = require('cors'); // Import the 'cors' middleware
+
+// Use 'cors' middleware to enable CORS
+app.use(cors());
 
 app.listen(3300, ()=> {
   console.log("Server is now listening at port 3300");
@@ -8,11 +12,11 @@ app.listen(3300, ()=> {
 
 client.connect();
 
+// this shows the json in the api
 app.get('/notes', (req, res)=>{
   client.query(`SELECT * FROM notes`, (err, result)=>{
       if(!err){
         res.send(result.rows);
-          //res.send(result.rows.map(row => row.text));
       }
   });
   client.end;
@@ -38,3 +42,8 @@ app.post('/notes', (req, res)=> {
   })
   client.end;
 })
+
+module.exports = {
+  app: app,
+  client: client
+};
