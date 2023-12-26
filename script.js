@@ -6,10 +6,12 @@ function createDeleteButton(parentElement) {
   span.innerHTML = "\u00d7";
   parentElement.appendChild(span);
   span.addEventListener("click", function () {
+    const taskText = parentElement.textContent.trim(); // Get the text content of the task
     parentElement.remove();
-    saveData();
+    deleteTaskFromServer(taskText); // Call the function to delete the task from the server
   });
 }
+
 
 function createEditButton(parentElement) {
   let edit = document.createElement("edit");
@@ -24,19 +26,23 @@ function createEditButton(parentElement) {
   });
 }
 
-function addTask() { // is used in the HTML
-  if (inputBox.value === '') {
-    alert("You must write a task");
+function addTask() {
+  const inputBox = document.getElementById('input-box');
+  const taskText = inputBox.value.trim();
+
+  if (taskText === '') {
+    alert('You must write a task');
   } else {
     let li = document.createElement('li');
-    li.innerHTML = inputBox.value;
+    li.textContent = taskText; // Set the text content of the <li> element
     listContainer.appendChild(li);
     createDeleteButton(li);
     createEditButton(li);
     inputBox.value = '';
-    saveData();
+    addTaskToServer(taskText); // Send task text to the server (POST)
   }
 }
+
 
 listContainer.addEventListener("click", function (e) {
   if (e.target.tagName === 'LI') {
@@ -53,7 +59,7 @@ function saveData() {
   localStorage.setItem("data", listContainer.innerHTML);
 }
 
-// retrieves data from the database
+// retrieves data from the database (GET)
 async function showTasksFromServer() {
   try {
     const response = await fetch('http://localhost:3300/notes');
@@ -87,33 +93,60 @@ async function performTaskRetrieval() {
 }
 
 performTaskRetrieval();
-/*
-let notes = [];
 
-handleDatabase(notes);
-// Function to create LI elements from notes and add them to the list
-function addNotesToUI(notes) {
-  const listContainer = document.getElementById('list-container');
-
-  notes.forEach(note => {
-    const li = document.createElement('li');
-    li.textContent = note;
-    listContainer.appendChild(li);
-  });
-}
-
-// Handle the database to retrieve notes and render them to the UI
-async function retrieveAndDisplayNotes() {
+async function addTaskToServer(taskText) {
   try {
-    let notes = [];
-    await handleDatabase(notes); // Retrieve notes from the database
-    console.log('Retrieved notes:', notes);
-    await addNotesToUI(notes); // Add notes to the UI
+    const taskData = { text: taskText }; // Create JSON object with 'text' key
+    const response = await fetch('http://localhost:3300/notes', {
+      method: 'POST',
+      headers: { // it informs the server that the payload is in JSON format.
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(taskData) // Send task data in JSON format with 'text' key
+    });
+
+    if (response.ok) {
+      console.log('Task added successfully');
+      await showTasksFromServer(); // Refresh the task list after adding a new task
+    } else {
+      console.error('Failed to add task:', response.statusText);
+    }
   } catch (error) {
-    console.error('Error:', error.message);
+    console.error('Error adding task:', error.message);
   }
 }
 
-retrieveAndDisplayNotes(); // Call the function to retrieve and display notes
+// Function to delete a task from the server
+async function deleteTaskFromServer(taskText) {
+  try {
+    // Remove the last two characters to extract the text
+    const textToUse = taskText.slice(0, -2); // to remove the icons
 
-*/
+    if (!textToUse) {
+      console.error('Failed to extract text from:', taskText);
+      return;
+    }
+
+    const taskData = { text: textToUse }; // Create a JSON object with the extracted text
+
+    const response = await fetch('http://localhost:3300/notes', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(taskData) // Send task text in JSON format for deletion
+    });
+
+    if (response.ok) {
+      console.log('Task deletion was successful');
+      await showTasksFromServer(); // Refresh the task list after deletion
+    } else {
+      console.error('Failed to delete task:', response.statusText);
+    }
+  } catch (error) {
+    console.error('Error deleting task:', error.message);
+  }
+}
+
+
+
