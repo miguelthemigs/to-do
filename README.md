@@ -5,5 +5,5 @@ The API created serves as a bridge between the application and the database, all
 
 ![To-Do List App](https://github.com/miguelthemigs/to-do/assets/93150152/d7fee306-1529-40c0-8d98-e374cad4fb3b)
 
-# Text stored in the database
+### Text stored in the database
 ![image](https://github.com/miguelthemigs/to-do/assets/93150152/5638f523-688f-4775-9d1a-8e79dfa5d437)
