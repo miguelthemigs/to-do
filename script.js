@@ -42,6 +42,7 @@ async function updateTaskInServer(oldText, newText) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ oldText, newText }) // Send old and new text for update
+      //{"oldText":"***","newText":"****"}
     });
 
     if (!response.ok) {
