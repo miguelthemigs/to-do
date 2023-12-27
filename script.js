@@ -12,18 +12,44 @@ function createDeleteButton(parentElement) {
   });
 }
 
-
 function createEditButton(parentElement) {
   let edit = document.createElement("edit");
   edit.innerHTML = "\u270e";
   parentElement.appendChild(edit);
-  edit.addEventListener("click", function () {
-    const newText = prompt("Edit your task", parentElement.firstChild.textContent);
-    if (newText !== null && newText !== '') {
+  
+  edit.addEventListener("click", async function () {
+    const oldText = parentElement.firstChild.textContent;
+    const newText = prompt("Edit your task", oldText);
+
+    if (newText !== null && newText !== '' && newText !== oldText) {
       parentElement.firstChild.textContent = newText;
-      saveData();
+
+      try {
+        await updateTaskInServer(oldText, newText);
+        await showTasksFromServer(); // Refresh the task list after update
+      } catch (error) {
+        console.error('Error updating task:', error.message);
+      }
     }
   });
+}
+
+async function updateTaskInServer(oldText, newText) {
+  try {
+    const response = await fetch('http://localhost:3300/notes', {
+      method: 'PUT', // Use the PUT method to update the task
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ oldText, newText }) // Send old and new text for update
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to update task');
+    }
+  } catch (error) {
+    throw new Error(error.message);
+  }
 }
 
 function addTask() {
@@ -47,7 +73,6 @@ function addTask() {
 listContainer.addEventListener("click", function (e) {
   if (e.target.tagName === 'LI') {
     e.target.classList.toggle("checked");
-    console.log("foi");
     saveData();
   } else if (e.target.tagName === 'SPAN') {
     e.target.parentElement.remove();

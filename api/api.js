@@ -65,7 +65,6 @@ app.delete('/notes', (req, res) => {
 
 
 // PUT REQUEST (to edit notes)
-/*
 app.put('/notes', (req, res) => {
   const oldNoteText = req.body.oldText; // Unique existing note text
   const newNoteText = req.body.newText; // New text for the note
@@ -85,7 +84,7 @@ app.put('/notes', (req, res) => {
     }
   });
 });
-*/
+
 
 module.exports = {
   app: app,
