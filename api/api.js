@@ -1,7 +1,7 @@
 const client = require("./databasepg.js");
 const express = require("express");
 const app = express();
-const cors = require('cors'); // Import the 'cors' middleware
+const cors = require('cors');
 
 // Use 'cors' middleware to enable CORS
 app.use(cors());
