@@ -46,7 +46,6 @@ app.post('/notes', (req, res)=> { // this is a callback function. when a post re
 // DELETE REQUEST
 app.delete('/notes', (req, res) => {
   const noteTextToDelete = req.body.text; // Unique note text used for deletion
-  console.log("text is", noteTextToDelete);
   if (!noteTextToDelete) {
     return res.status(400).send('Bad request: Missing note text for deletion');
   }
